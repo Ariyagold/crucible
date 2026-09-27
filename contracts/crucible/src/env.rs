@@ -51,7 +51,7 @@ pub struct EntryTtlSettings {
 pub const DEFAULT_SECONDS_PER_LEDGER: u64 = 5;
 
 /// A duration helper type for time-based test operations.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Duration {
     seconds: u64,
 }
@@ -859,6 +859,50 @@ impl MockEnv {
             min_persistent_entry_ttl: info.min_persistent_entry_ttl,
             max_entry_ttl: info.max_entry_ttl,
         });
+    }
+
+    /// Advances both ledger timestamp and sequence number in a single combined epoch step.
+    ///
+    /// Accepts a [`LedgerEpoch`](crate::time::LedgerEpoch), a tuple `(Duration, u32)`, or a [`Duration`].
+    ///
+    /// # Example
+    /// ```ignore
+    /// env.advance_epoch((Duration::days(7), 1000));
+    /// env.advance_epoch(LedgerEpoch::new(Duration::days(7), 1000));
+    /// ```
+    pub fn advance_epoch(&self, epoch: impl Into<crate::time::LedgerEpoch>) {
+        let epoch = epoch.into();
+        if epoch.duration.as_seconds() == 0 && epoch.sequences == 0 {
+            return;
+        }
+
+        let info = self.inner.ledger().get();
+        let new_ts = info
+            .timestamp
+            .checked_add(epoch.duration.as_seconds())
+            .expect("timestamp overflow in advance_epoch");
+        let new_seq = info
+            .sequence_number
+            .checked_add(epoch.sequences)
+            .expect("sequence number overflow in advance_epoch");
+
+        self.inner.ledger().set(soroban_sdk::testutils::LedgerInfo {
+            sequence_number: new_seq,
+            timestamp: new_ts,
+            protocol_version: info.protocol_version,
+            base_reserve: info.base_reserve,
+            network_id: info.network_id,
+            min_temp_entry_ttl: info.min_temp_entry_ttl,
+            min_persistent_entry_ttl: info.min_persistent_entry_ttl,
+            max_entry_ttl: info.max_entry_ttl,
+        });
+    }
+
+    /// Advances both ledger timestamp and sequence number in a single combined call.
+    ///
+    /// Shorthand helper for [`advance_epoch`](Self::advance_epoch).
+    pub fn advance_sequence_and_time(&self, duration: Duration, sequences: u32) {
+        self.advance_epoch((duration, sequences));
     }
 
     /// Advances the ledger clock by `ledgers`, moving time and sequence together.
@@ -2706,6 +2750,39 @@ mod time_advance_tests {
         
         env.advance_sequence(0);
         
+        assert_eq!(env.ledger_sequence(), initial_seq);
+    }
+
+    #[test]
+    fn advance_epoch_advances_sequence_and_timestamp() {
+        let env = MockEnv::builder().at_timestamp(1_000_000).build();
+        let initial_seq = env.ledger_sequence();
+
+        env.advance_epoch((Duration::days(7), 1000));
+
+        assert_eq!(env.timestamp(), 1_000_000 + 7 * 86400);
+        assert_eq!(env.ledger_sequence(), initial_seq + 1000);
+    }
+
+    #[test]
+    fn advance_sequence_and_time_advances_both() {
+        let env = MockEnv::builder().at_timestamp(1_000_000).build();
+        let initial_seq = env.ledger_sequence();
+
+        env.advance_sequence_and_time(Duration::hours(2), 50);
+
+        assert_eq!(env.timestamp(), 1_000_000 + 7200);
+        assert_eq!(env.ledger_sequence(), initial_seq + 50);
+    }
+
+    #[test]
+    fn advance_epoch_edge_cases_zero_duration_and_sequences() {
+        let env = MockEnv::builder().at_timestamp(1_000_000).build();
+        let initial_seq = env.ledger_sequence();
+
+        env.advance_epoch((Duration::seconds(0), 0));
+
+        assert_eq!(env.timestamp(), 1_000_000);
         assert_eq!(env.ledger_sequence(), initial_seq);
     }
 }
