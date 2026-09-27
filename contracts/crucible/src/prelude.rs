@@ -30,7 +30,7 @@ pub use crate::sim::PreparedTx;
 pub use crate::sim::ReentrancyProbe;
 pub use crate::sim::ReentrancyProbeResult;
 pub use crate::sim::SimulatedTx;
-pub use crate::time::{add_months, add_years};
+pub use crate::time::{LedgerEpoch, add_months, add_years, advance_epoch};
 pub use crate::env::CryptoCurve;
 pub use crate::env::MockCryptoRegistry;
 pub use crate::env::MockKeyPair;
