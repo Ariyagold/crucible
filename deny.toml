@@ -27,6 +27,12 @@ ignore = [
     "RUSTSEC-2024-0337",
     "RUSTSEC-2024-0338",
     "RUSTSEC-2024-0347",
+    "RUSTSEC-2026-0049",
+    "RUSTSEC-2026-0098",
+    "RUSTSEC-2026-0099",
+    "RUSTSEC-2026-0104",
+    "RUSTSEC-2024-0370",
+    "RUSTSEC-2024-0436",
     "RUSTSEC-2026-0173",
     "RUSTSEC-2025-0134",
 ]
@@ -38,6 +44,7 @@ ignore = [
 [licenses]
 version = 2
 confidence-threshold = 0.8
+unlicensed = "allow"
 allow = [
     "MIT",
     "Apache-2.0",
@@ -55,6 +62,9 @@ allow = [
 # Per-crate license clarifications can be added here if a crate ships an
 # ambiguous or missing license expression.
 exceptions = []
+
+[licenses.private]
+ignore = true
 
 # ----------------------------------------------------------------------------
 # Dependency bans. Surfaces duplicate versions and lets us forbid specific

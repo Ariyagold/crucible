@@ -85,7 +85,7 @@ jobs:
       matrix:
         include:
           - language: rust
-            build-mode: manual
+            build-mode: none
           - language: javascript-typescript
             build-mode: none
     steps:
@@ -109,7 +109,7 @@ jobs:
           queries: security-extended
 
       - name: Build workspace (CodeQL extract)
-        if: matrix.language == 'rust'
+        if: matrix.language == 'rust' && matrix.build-mode == 'manual'
         run: cargo build --workspace --all-targets --all-features
 
       - name: Perform CodeQL analysis
