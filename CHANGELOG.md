@@ -1,3 +1,9 @@
+## [1.32.1](https://github.com/benelabs/crucible/compare/v1.32.0...v1.32.1) (2026-09-27)
+
+### Bug Fixes
+
+* **security:** resolve cargo-deny licenses, cargo-audit advisories, and CodeQL rust build mode ([17b86d4](https://github.com/benelabs/crucible/commit/17b86d4f89d412166392dc967aa395a7f685ad48))
+
 ## [1.32.0](https://github.com/benelabs/crucible/compare/v1.31.0...v1.32.0) (2026-09-27)
 
 ### Features
