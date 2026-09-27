@@ -1,3 +1,9 @@
+## [1.32.0](https://github.com/benelabs/crucible/compare/v1.31.0...v1.32.0) (2026-09-27)
+
+### Features
+
+* **time:** add advance_epoch combined helper for ledger epoch simulation ([#773](https://github.com/benelabs/crucible/issues/773)) ([caa6043](https://github.com/benelabs/crucible/commit/caa60437aa295920d7adfae1b5e61c9486e5e27f))
+
 ## [1.31.0](https://github.com/benelabs/crucible/compare/v1.30.1...v1.31.0) (2026-09-27)
 
 ### Features
