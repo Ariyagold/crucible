@@ -70,7 +70,7 @@ crucible wraps the official `soroban-sdk` test utilities and builds a fluent, er
 
 - **`MockEnvBuilder`** — fluent builder for the Soroban `Env` with sensible defaults, configurable ledger state, and one-liner seeded accounts.
 - **Pre-funded accounts** — generate named accounts with arbitrary XLM and custom token balances ready to go.
-- **Standard mock tokens** — instant `MockToken` for XLM, USDC, or any arbitrary asset; full admin controls included.
+- **Standard mock tokens** — instant `MockToken` for XLM, USDC, EURC, or custom assets; full admin controls included.
 - **Transaction simulation helpers** — wrap contract invocations with fee estimation, auth inspection, and rollback-safe dry-runs.
 - **`assert_emitted!` macro** — pattern-match contract events with a concise, readable syntax.
 - **`assert_not_emitted!` macro** — verify silence; confirm events that must _not_ fire.
@@ -354,11 +354,11 @@ let env = MockEnv::builder()
     .with_account("alice", Stroops::xlm(1_000))
     .build();
 
-// Create a mock XLM SAC token
-let xlm = MockToken::xlm(&env);
-
-// Create a custom 6-decimal asset
-let usdc = MockToken::new(&env, "USDC", 6);
+// Create mock tokens using convenience constructors or custom settings
+let xlm  = MockToken::xlm(&env);
+let usdc = MockToken::usdc(&env);
+let eurc = MockToken::eurc(&env);
+let custom = MockToken::new(&env, "CUSTOM", 8);
 
 // Mint tokens to an account
 xlm.mint(&env.account("alice").address(), 50_000_000); // 5 XLM in stroops
@@ -554,7 +554,7 @@ impl AmmFixture {
             .build();
 
         let xlm  = MockToken::xlm(&env);
-        let usdc = MockToken::new(&env, "USDC", 6);
+        let usdc = MockToken::usdc(&env);
         let alice = env.account("alice");
         let bob   = env.account("bob");
 
@@ -1076,7 +1076,7 @@ fn test_aggregator_calls_multiple_pools() {
         .build();
 
     let xlm    = MockToken::xlm(&env);
-    let usdc   = MockToken::new(&env, "USDC", 6);
+    let usdc   = MockToken::usdc(&env);
     let trader = env.account("trader");
 
     // Seed both pools

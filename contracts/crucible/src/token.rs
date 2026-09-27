@@ -157,6 +157,40 @@ impl MockToken {
         }
     }
 
+    /// Creates a mock USDC token (6 decimal places).
+    ///
+    /// # Arguments
+    ///
+    /// * `env` - The mock environment to use
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// use crucible::prelude::*;
+    /// let env = MockEnv::builder().build();
+    /// let usdc = MockToken::usdc(&env);
+    /// ```
+    pub fn usdc(env: &MockEnv) -> Self {
+        Self::new(env, "USDC", 6)
+    }
+
+    /// Creates a mock EURC token (6 decimal places).
+    ///
+    /// # Arguments
+    ///
+    /// * `env` - The mock environment to use
+    ///
+    /// # Example
+    ///
+    /// ```ignore
+    /// use crucible::prelude::*;
+    /// let env = MockEnv::builder().build();
+    /// let eurc = MockToken::eurc(&env);
+    /// ```
+    pub fn eurc(env: &MockEnv) -> Self {
+        Self::new(env, "EURC", 6)
+    }
+
     /// Creates a MockToken from an existing address with the given decimals.
     ///
     /// Note: When using this method, the admin address is set to the token address
@@ -614,6 +648,34 @@ mod tests {
     use crate::env::Stroops;
 
     // ── Existing API compatibility ────────────────────────────────────────────
+
+    #[test]
+    fn test_usdc_constructor() {
+        let env = MockEnv::builder()
+            .with_account("alice", Stroops::from(0))
+            .build();
+
+        let usdc = MockToken::usdc(&env);
+        assert_eq!(usdc.decimals(), 6);
+
+        let alice = env.account("alice");
+        usdc.mint(&alice.address(), 1_000_000);
+        assert_eq!(usdc.balance(&alice.address()), 1_000_000);
+    }
+
+    #[test]
+    fn test_eurc_constructor() {
+        let env = MockEnv::builder()
+            .with_account("alice", Stroops::from(0))
+            .build();
+
+        let eurc = MockToken::eurc(&env);
+        assert_eq!(eurc.decimals(), 6);
+
+        let alice = env.account("alice");
+        eurc.mint(&alice.address(), 2_500_000);
+        assert_eq!(eurc.balance(&alice.address()), 2_500_000);
+    }
 
     #[test]
     fn test_mint_and_check_balance() {
