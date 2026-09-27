@@ -1,3 +1,9 @@
+## [1.31.0](https://github.com/benelabs/crucible/compare/v1.30.1...v1.31.0) (2026-09-27)
+
+### Features
+
+* **token:** add MockToken::usdc() and MockToken::eurc() convenience constructors ([#769](https://github.com/benelabs/crucible/issues/769)) ([626e886](https://github.com/benelabs/crucible/commit/626e8864d1eb77e8c532680b92bdb1a822aab002))
+
 ## [1.30.1](https://github.com/benelabs/crucible/compare/v1.30.0...v1.30.1) (2026-09-24)
 
 ### Bug Fixes
